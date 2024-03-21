@@ -40,5 +40,7 @@ h1 {
 
 input {
   width: 100%;
+  justify-content: center;
+  text-align: center;
   margin-bottom: 10px;
 }

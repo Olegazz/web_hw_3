@@ -51,6 +51,22 @@ const App = () => {
     setTasks(updatedTasks);
   };
 
+  const onDragStart = (e, task) => {
+    e.dataTransfer.setData("task", JSON.stringify(task));
+  };
+
+  const onDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const onDrop = (e, status) => {
+    e.preventDefault();
+    const task = JSON.parse(e.dataTransfer.getData("task"));
+    if (status !== task.status) {
+      moveTask(task, status);
+    }
+  };
+
   return (
       <div className="container">
         <div className="column todo">
@@ -64,6 +80,10 @@ const App = () => {
                       moveTask={moveTask}
                       deleteTask={deleteTask}
                       editTask={editTask}
+                      onDragStart={onDragStart}
+                      onDragOver={onDragOver}
+                      onDrop={onDrop}
+                      status="todo"
                   />
               ))}
           <button onClick={() => addTask("todo")}>Add Task</button>
@@ -79,6 +99,10 @@ const App = () => {
                       moveTask={moveTask}
                       deleteTask={deleteTask}
                       editTask={editTask}
+                      onDragStart={onDragStart}
+                      onDragOver={onDragOver}
+                      onDrop={onDrop}
+                      status="in progress"
                   />
               ))}
           <button onClick={() => addTask("in progress")}>Add Task</button>
@@ -94,6 +118,10 @@ const App = () => {
                       moveTask={moveTask}
                       deleteTask={deleteTask}
                       editTask={editTask}
+                      onDragStart={onDragStart}
+                      onDragOver={onDragOver}
+                      onDrop={onDrop}
+                      status="done"
                   />
               ))}
           <button onClick={() => addTask("done")}>Add Task</button>
