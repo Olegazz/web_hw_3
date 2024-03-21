@@ -3,14 +3,10 @@ import "./App.css";
 import Task from "./Task";
 
 const App = () => {
-  const [tasks, setTasks] = useState([]);
-
-  useEffect(() => {
+  const [tasks, setTasks] = useState(() => {
     const storedTasks = localStorage.getItem("tasks");
-    if (storedTasks) {
-      setTasks(JSON.parse(storedTasks));
-    }
-  }, []);
+    return storedTasks ? JSON.parse(storedTasks) : [];
+  });
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -26,33 +22,33 @@ const App = () => {
     setTasks([...tasks, newTask]);
   };
 
-  const moveTask = (task, newStatus) => {
-    const updatedTasks = tasks.map((t) => {
-      if (t.id === task.id) {
-        return { ...t, status: newStatus };
+  const moveTask = (taskId, newStatus) => {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === taskId) {
+        return { ...task, status: newStatus };
       }
-      return t;
+      return task;
     });
     setTasks(updatedTasks);
   };
 
-  const deleteTask = (id) => {
-    const filteredTasks = tasks.filter((t) => t.id !== id);
+  const deleteTask = (taskId) => {
+    const filteredTasks = tasks.filter((task) => task.id !== taskId);
     setTasks(filteredTasks);
   };
 
-  const editTask = (task, newTitle, newDescription) => {
-    const updatedTasks = tasks.map((t) => {
-      if (t.id === task.id) {
-        return { ...t, title: newTitle, description: newDescription };
+  const editTask = (taskId, newTitle, newDescription) => {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === taskId) {
+        return { ...task, title: newTitle, description: newDescription };
       }
-      return t;
+      return task;
     });
     setTasks(updatedTasks);
   };
 
-  const onDragStart = (e, task) => {
-    e.dataTransfer.setData("task", JSON.stringify(task));
+  const onDragStart = (e, taskId) => {
+    e.dataTransfer.setData("taskId", taskId.toString());
   };
 
   const onDragOver = (e) => {
@@ -61,69 +57,55 @@ const App = () => {
 
   const onDrop = (e, status) => {
     e.preventDefault();
-    const task = JSON.parse(e.dataTransfer.getData("task"));
-    if (status !== task.status) {
-      moveTask(task, status);
-    }
+    const taskId = parseInt(e.dataTransfer.getData("taskId"));
+    moveTask(taskId, status);
   };
 
   return (
       <div className="container">
-        <div className="column todo">
+        <div className="column todo" onDragOver={onDragOver} onDrop={(e) => onDrop(e, "todo")}>
           <h1>To Do</h1>
-          {tasks
-              .filter((task) => task.status === "todo")
-              .map((task) => (
+          {tasks.map((task) => (
+              task.status === "todo" && (
                   <Task
                       key={task.id}
                       task={task}
-                      moveTask={moveTask}
                       deleteTask={deleteTask}
                       editTask={editTask}
                       onDragStart={onDragStart}
-                      onDragOver={onDragOver}
-                      onDrop={onDrop}
-                      status="todo"
                   />
-              ))}
+              )
+          ))}
           <button onClick={() => addTask("todo")}>Add Task</button>
         </div>
-        <div className="column in-progress">
+        <div className="column in-progress" onDragOver={onDragOver} onDrop={(e) => onDrop(e, "in progress")}>
           <h1>In Progress</h1>
-          {tasks
-              .filter((task) => task.status === "in progress")
-              .map((task) => (
+          {tasks.map((task) => (
+              task.status === "in progress" && (
                   <Task
                       key={task.id}
                       task={task}
-                      moveTask={moveTask}
                       deleteTask={deleteTask}
                       editTask={editTask}
                       onDragStart={onDragStart}
-                      onDragOver={onDragOver}
-                      onDrop={onDrop}
-                      status="in progress"
                   />
-              ))}
+              )
+          ))}
           <button onClick={() => addTask("in progress")}>Add Task</button>
         </div>
-        <div className="column done">
+        <div className="column done" onDragOver={onDragOver} onDrop={(e) => onDrop(e, "done")}>
           <h1>Done</h1>
-          {tasks
-              .filter((task) => task.status === "done")
-              .map((task) => (
+          {tasks.map((task) => (
+              task.status === "done" && (
                   <Task
                       key={task.id}
                       task={task}
-                      moveTask={moveTask}
                       deleteTask={deleteTask}
                       editTask={editTask}
                       onDragStart={onDragStart}
-                      onDragOver={onDragOver}
-                      onDrop={onDrop}
-                      status="done"
                   />
-              ))}
+              )
+          ))}
           <button onClick={() => addTask("done")}>Add Task</button>
         </div>
       </div>
