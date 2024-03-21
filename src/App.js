@@ -59,7 +59,6 @@ const App = () => {
               .filter((task) => task.status === "todo")
               .map((task) => (
                   <Task
-                      draggable={true}
                       key={task.id}
                       task={task}
                       moveTask={moveTask}
@@ -75,7 +74,6 @@ const App = () => {
               .filter((task) => task.status === "in progress")
               .map((task) => (
                   <Task
-                      draggable={true}
                       key={task.id}
                       task={task}
                       moveTask={moveTask}
@@ -91,7 +89,6 @@ const App = () => {
               .filter((task) => task.status === "done")
               .map((task) => (
                   <Task
-                      draggable={true}
                       key={task.id}
                       task={task}
                       moveTask={moveTask}
